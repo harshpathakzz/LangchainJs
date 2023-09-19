@@ -2,6 +2,7 @@
   "name": "LangchainJs",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "repository": "https://github.com/harshpathakzz/LangchainJs.git",
   "author": "harshpathakzz <harshpathak2017@gmail.com>",
   "license": "MIT",
