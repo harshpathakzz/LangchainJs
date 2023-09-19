@@ -7,5 +7,8 @@
   "license": "MIT",
   "dependencies": {
     "langchain": "^0.0.151"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
