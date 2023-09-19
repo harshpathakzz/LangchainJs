@@ -1,11 +1,11 @@
 {
-  "name": "langchainjs",
+  "name": "LangchainJs",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC"
+  "repository": "https://github.com/harshpathakzz/LangchainJs.git",
+  "author": "harshpathakzz <harshpathak2017@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "langchain": "^0.0.151"
+  }
 }
