@@ -1,11 +1,8 @@
 import { config } from "dotenv";
-
 config();
 
 import { ConversationChain } from "langchain/chains";
-
 import { ChatOpenAI } from "langchain/chat_models/openai";
-
 import {
   ChatPromptTemplate,
   HumanMessagePromptTemplate,
@@ -14,6 +11,12 @@ import {
 } from "langchain/prompts";
 
 import { BufferMemory } from "langchain/memory";
+import readline from "readline";
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
 
 const chat = new ChatOpenAI({ temperature: 0.5 });
 
@@ -41,7 +44,11 @@ async function main() {
 }
 
 async function askQuestion() {
-  return prompt("You: ");
+  return new Promise((resolve) => {
+    rl.question("You: ", (input) => {
+      resolve(input);
+    });
+  });
 }
 
 main();
