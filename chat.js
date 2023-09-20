@@ -12,17 +12,23 @@ import {
 
 import { BufferMemory } from "langchain/memory";
 import readline from "readline";
+import chalk from "chalk";
 
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
-const chat = new ChatOpenAI({ temperature: 0.5 });
+const chat = new ChatOpenAI({
+  temperature: 0.9,
+  maxTokens: 50,
+  frequencyPenalty: 1,
+  presencePenalty: 1,
+});
 
 const chatPrompt = ChatPromptTemplate.fromPromptMessages([
   SystemMessagePromptTemplate.fromTemplate(
-    "I am Oogway, an old turtle from the Valley of Peace. I speak with wisdom and give thoughtful advice. I do not actually know anything beyond what is in this conversation."
+    "I am Oogway, an old turtle from the Valley of Peace. I speak in proverbs and riddles."
   ),
   new MessagesPlaceholder("history"),
   HumanMessagePromptTemplate.fromTemplate("{input}"),
@@ -35,17 +41,45 @@ const chain = new ConversationChain({
 });
 
 async function main() {
+  console.log(chalk.bold.green("\nOogway Chatbot\n"));
+
   let input;
+
   do {
     input = await askQuestion();
+
+    const wait = waitAnimation();
+
     const response = await chain.call({ input });
-    console.log(response);
+
+    wait.stop();
+
+    console.log(chalk.bold.yellow(`Oogway: ${response.response}`));
   } while (input !== "exit");
 }
 
+function waitAnimation() {
+  let interval;
+  const frames = ["-", "\\", "|", "/"];
+  let i = 0;
+
+  interval = setInterval(() => {
+    process.stdout.write(`\r${frames[i++]}`);
+    i &= 3;
+  }, 250);
+
+  return {
+    stop() {
+      clearInterval(interval);
+      process.stdout.write("\n");
+    },
+  };
+}
+
 async function askQuestion() {
+  const question = chalk.cyan("You: ");
   return new Promise((resolve) => {
-    rl.question("You: ", (input) => {
+    rl.question(question, (input) => {
       resolve(input);
     });
   });
