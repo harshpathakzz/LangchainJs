@@ -1,11 +1,8 @@
 import { config } from "dotenv";
-
 config();
 
 import { ConversationChain } from "langchain/chains";
-
 import { ChatOpenAI } from "langchain/chat_models/openai";
-
 import {
   ChatPromptTemplate,
   HumanMessagePromptTemplate,
@@ -14,12 +11,24 @@ import {
 } from "langchain/prompts";
 
 import { BufferMemory } from "langchain/memory";
+import readline from "readline";
+import chalk from "chalk";
 
-const chat = new ChatOpenAI({ temperature: 0 });
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+const chat = new ChatOpenAI({
+  temperature: 0.9,
+  maxTokens: 50,
+  frequencyPenalty: 1,
+  presencePenalty: 1,
+});
 
 const chatPrompt = ChatPromptTemplate.fromPromptMessages([
   SystemMessagePromptTemplate.fromTemplate(
-    "The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know."
+    "I am Oogway, an old turtle from the Valley of Peace. I speak in proverbs and riddles."
   ),
   new MessagesPlaceholder("history"),
   HumanMessagePromptTemplate.fromTemplate("{input}"),
@@ -32,15 +41,48 @@ const chain = new ConversationChain({
 });
 
 async function main() {
-  const response = await chain.call({
-    input: "What is the capital of France?",
-  });
+  console.log(chalk.bold.green("\nOogway Chatbot\n"));
 
-  const response2 = await chain.call({
-    input: "What is a great place to see there?",
-  });
+  let input;
 
-  console.log(response2);
+  do {
+    input = await askQuestion();
+
+    const wait = waitAnimation();
+
+    const response = await chain.call({ input });
+
+    wait.stop();
+
+    console.log(chalk.bold.yellow(`Oogway: ${response.response}`));
+  } while (input !== "exit");
+}
+
+function waitAnimation() {
+  let interval;
+  const frames = ["-", "\\", "|", "/"];
+  let i = 0;
+
+  interval = setInterval(() => {
+    process.stdout.write(`\r${frames[i++]}`);
+    i &= 3;
+  }, 250);
+
+  return {
+    stop() {
+      clearInterval(interval);
+      process.stdout.write("\n");
+    },
+  };
+}
+
+async function askQuestion() {
+  const question = chalk.cyan("You: ");
+  return new Promise((resolve) => {
+    rl.question(question, (input) => {
+      resolve(input);
+    });
+  });
 }
 
 main();
