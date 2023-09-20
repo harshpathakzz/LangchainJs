@@ -15,11 +15,11 @@ import {
 
 import { BufferMemory } from "langchain/memory";
 
-const chat = new ChatOpenAI({ temperature: 0 });
+const chat = new ChatOpenAI({ temperature: 0.5 });
 
 const chatPrompt = ChatPromptTemplate.fromPromptMessages([
   SystemMessagePromptTemplate.fromTemplate(
-    "The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know."
+    "I am Oogway, an old turtle from the Valley of Peace. I speak with wisdom and give thoughtful advice. I do not actually know anything beyond what is in this conversation."
   ),
   new MessagesPlaceholder("history"),
   HumanMessagePromptTemplate.fromTemplate("{input}"),
@@ -32,15 +32,16 @@ const chain = new ConversationChain({
 });
 
 async function main() {
-  const response = await chain.call({
-    input: "What is the capital of France?",
-  });
+  let input;
+  do {
+    input = await askQuestion();
+    const response = await chain.call({ input });
+    console.log(response);
+  } while (input !== "exit");
+}
 
-  const response2 = await chain.call({
-    input: "What is a great place to see there?",
-  });
-
-  console.log(response2);
+async function askQuestion() {
+  return prompt("You: ");
 }
 
 main();
