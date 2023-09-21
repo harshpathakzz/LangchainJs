@@ -18,7 +18,7 @@ import inquirer from "inquirer"; // Import inquirer for user input
 // Initialize the ChatOpenAI model with specific parameters
 const chat = new ChatOpenAI({
   temperature: 0.9,
-  maxTokens: 50,
+  maxTokens: 100,
   frequencyPenalty: 1,
   presencePenalty: 1,
 });
@@ -160,13 +160,24 @@ async function choosePersonality() {
 
 // Function to post-process the model's response
 function postProcessResponse(response) {
-  // Ensure the response ends with a punctuation mark if it doesn't already.
-  const lastChar = response.trim().slice(-1);
-  if (lastChar !== "." && lastChar !== "!" && lastChar !== "?") {
-    response += ".";
-  }
+  // Split the response into sentences
+  const sentences = response.split(/[.!?]/);
 
-  return response;
+  // Filter out incomplete sentences
+  const completeSentences = sentences.filter((sentence) => {
+    // Check if the sentence is not empty and doesn't end with a space (indicating it's incomplete)
+    return sentence.trim().length > 0 && !/\s$/.test(sentence);
+  });
+
+  // Rebuild the cleaned response by joining complete sentences with their original punctuation
+  const cleanedResponse = completeSentences
+    .map((sentence, index) => {
+      const punctuation = response.match(/[.!?]/g)[index] || ""; // Get the original punctuation
+      return sentence.trim() + punctuation;
+    })
+    .join(" ");
+
+  return cleanedResponse;
 }
 
 main(); // Call the main function to start the program
