@@ -14,11 +14,6 @@ import { BufferMemory } from "langchain/memory";
 import readline from "readline";
 import chalk from "chalk";
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-
 const chat = new ChatOpenAI({
   temperature: 0.7,
   maxTokens: 50,
@@ -46,21 +41,26 @@ function createChatPrompt(personName) {
   ]);
 }
 
-const chatPrompt = createChatPrompt("shakespeare"); // Use the personality by default
-
-const chain = new ConversationChain({
-  memory: new BufferMemory({ returnMessages: true, memoryKey: "history" }),
-  prompt: chatPrompt,
-  llm: chat,
-});
-
 async function main() {
   console.log(chalk.bold.green("\nCharacter Chatbot\n"));
+
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  const selectedPersonality = await choosePersonality(rl); // Choose personality dynamically
+
+  const chain = new ConversationChain({
+    memory: new BufferMemory({ returnMessages: true, memoryKey: "history" }),
+    prompt: createChatPrompt(selectedPersonality), // Use the selected personality
+    llm: chat,
+  });
 
   let input;
 
   do {
-    input = await askQuestion();
+    input = await askQuestion(rl);
 
     const wait = waitAnimation();
 
@@ -70,6 +70,8 @@ async function main() {
 
     console.log(chalk.bold.yellow(`Character: ${response.response}`));
   } while (input !== "exit");
+
+  rl.close(); // Close the readline interface when done
 }
 
 function waitAnimation() {
@@ -90,11 +92,47 @@ function waitAnimation() {
   };
 }
 
-async function askQuestion() {
+async function askQuestion(rl) {
   const question = chalk.cyan("You: ");
   return new Promise((resolve) => {
     rl.question(question, (input) => {
       resolve(input);
+    });
+  });
+}
+
+async function choosePersonality(rl) {
+  const personalityChoices = Object.keys(personality);
+  console.log(chalk.bold.blue("Choose a personality:"));
+  personalityChoices.forEach((choice, index) => {
+    console.log(`${index + 1}. ${choice}`);
+  });
+  const selectedPersonalityIndex = await promptForNumber(
+    "Enter the number of your chosen personality: ",
+    rl
+  );
+
+  if (
+    selectedPersonalityIndex >= 1 &&
+    selectedPersonalityIndex <= personalityChoices.length
+  ) {
+    return personalityChoices[selectedPersonalityIndex - 1];
+  } else {
+    console.log(chalk.bold.red("Invalid choice. Please try again."));
+    return choosePersonality(rl);
+  }
+}
+
+async function promptForNumber(prompt, rl) {
+  return new Promise((resolve) => {
+    rl.question(prompt, (input) => {
+      const number = parseInt(input);
+      if (!isNaN(number)) {
+        resolve(number);
+      } else {
+        console.log(chalk.bold.red("Invalid input. Please enter a number."));
+        resolve(promptForNumber(prompt, rl));
+      }
     });
   });
 }
