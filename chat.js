@@ -26,13 +26,23 @@ const chat = new ChatOpenAI({
   presencePenalty: 1,
 });
 
-const chatPrompt = ChatPromptTemplate.fromPromptMessages([
-  SystemMessagePromptTemplate.fromTemplate(
-    "I am Oogway, an old turtle from the Valley of Peace. I speak in proverbs and riddles."
-  ),
-  new MessagesPlaceholder("history"),
-  HumanMessagePromptTemplate.fromTemplate("{input}"),
-]);
+// Define personality object
+const personality = {
+  oogway:
+    "I am Oogway, an old turtle from the Valley of Peace. I speak in proverbs and riddles.",
+  // Add more personalities here
+};
+
+// Function to create a chat prompt from a personality
+function createChatPrompt(personName) {
+  return ChatPromptTemplate.fromPromptMessages([
+    SystemMessagePromptTemplate.fromTemplate(personality[personName]),
+    new MessagesPlaceholder("history"),
+    HumanMessagePromptTemplate.fromTemplate("{input}"),
+  ]);
+}
+
+const chatPrompt = createChatPrompt("oogway"); // Use the personality "oogway" by default
 
 const chain = new ConversationChain({
   memory: new BufferMemory({ returnMessages: true, memoryKey: "history" }),
