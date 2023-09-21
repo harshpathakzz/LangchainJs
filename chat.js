@@ -1,3 +1,4 @@
+// Import required modules and libraries
 import { config } from "dotenv"; // Load environment variables from a .env file
 config();
 
@@ -107,7 +108,8 @@ async function main() {
     );
 
     // Display the response with a typewriter effect
-    await displayResponseWithTypewriterEffect(response.response);
+    const cleanedResponse = postProcessResponse(response.response);
+    await displayResponseWithTypewriterEffect(cleanedResponse);
   } while (input !== "exit"); // Continue the loop until the user types "exit"
 }
 
@@ -154,6 +156,17 @@ async function choosePersonality() {
     },
   ]);
   return selectedPersonality;
+}
+
+// Function to post-process the model's response
+function postProcessResponse(response) {
+  // Ensure the response ends with a punctuation mark if it doesn't already.
+  const lastChar = response.trim().slice(-1);
+  if (lastChar !== "." && lastChar !== "!" && lastChar !== "?") {
+    response += ".";
+  }
+
+  return response;
 }
 
 main(); // Call the main function to start the program
