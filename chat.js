@@ -1,3 +1,4 @@
+// Import required modules and libraries
 import { config } from "dotenv"; // Load environment variables from a .env file
 config();
 
@@ -17,7 +18,7 @@ import inquirer from "inquirer"; // Import inquirer for user input
 // Initialize the ChatOpenAI model with specific parameters
 const chat = new ChatOpenAI({
   temperature: 0.9,
-  maxTokens: 50,
+  maxTokens: 100,
   frequencyPenalty: 1,
   presencePenalty: 1,
 });
@@ -107,7 +108,8 @@ async function main() {
     );
 
     // Display the response with a typewriter effect
-    await displayResponseWithTypewriterEffect(response.response);
+    const cleanedResponse = postProcessResponse(response.response);
+    await displayResponseWithTypewriterEffect(cleanedResponse);
   } while (input !== "exit"); // Continue the loop until the user types "exit"
 }
 
@@ -154,6 +156,28 @@ async function choosePersonality() {
     },
   ]);
   return selectedPersonality;
+}
+
+// Function to post-process the model's response
+function postProcessResponse(response) {
+  // Split the response into sentences
+  const sentences = response.split(/[.!?]/);
+
+  // Filter out incomplete sentences
+  const completeSentences = sentences.filter((sentence) => {
+    // Check if the sentence is not empty and doesn't end with a space (indicating it's incomplete)
+    return sentence.trim().length > 0 && !/\s$/.test(sentence);
+  });
+
+  // Rebuild the cleaned response by joining complete sentences with their original punctuation
+  const cleanedResponse = completeSentences
+    .map((sentence, index) => {
+      const punctuation = response.match(/[.!?]/g)[index] || ""; // Get the original punctuation
+      return sentence.trim() + punctuation;
+    })
+    .join(" ");
+
+  return cleanedResponse;
 }
 
 main(); // Call the main function to start the program
