@@ -32,17 +32,28 @@ const personality = {
   // Add more personalities with references and prompts here
 };
 
+const colorfulStyles = {
+  title: chalk.hex("#13b541"), // Blue text on yellow background
+  userPrompt: chalk.hex("#00FFFF"), // Cyan color for user prompts
+  characterName: chalk.hex("##00FFFF"), // Magenta for character names
+  response: chalk.hex("#E2894B"), // Green for responses
+};
+
 // Function to create a chat prompt from a personality
 function createChatPrompt(personName) {
   return ChatPromptTemplate.fromPromptMessages([
-    SystemMessagePromptTemplate.fromTemplate(personality[personName]),
+    SystemMessagePromptTemplate.fromTemplate(
+      colorfulStyles.characterName(personality[personName])
+    ), // Use magenta color
     new MessagesPlaceholder("history"),
-    HumanMessagePromptTemplate.fromTemplate("{input}"),
+    HumanMessagePromptTemplate.fromTemplate(
+      colorfulStyles.userPrompt("{input}")
+    ), // Use cyan color
   ]);
 }
 
 async function main() {
-  console.log(chalk.bold.green("\nCharacter Chatbot\n"));
+  console.log(colorfulStyles.title("\nWisdomGPT\n")); // Use colorful title
 
   const selectedPersonality = await choosePersonality(); // Choose personality dynamically
 
@@ -64,8 +75,8 @@ async function main() {
     wait.stop();
 
     console.log(
-      chalk.bold(`${selectedPersonality}: `) + // Display the character's name in bold
-        chalk.yellow(response.response) // Display the response in yellow
+      colorfulStyles.characterName(`${selectedPersonality}: `) + // Display the character's name in magenta
+        colorfulStyles.response(response.response) // Display the response in green
     );
   } while (input !== "exit");
 }
@@ -93,7 +104,7 @@ async function askQuestion() {
     {
       type: "input",
       name: "userInput",
-      message: "You: ",
+      message: colorfulStyles.userPrompt("You: "), // Use cyan color for the user input prompt
     },
   ]);
   return userInput;
@@ -105,7 +116,7 @@ async function choosePersonality() {
     {
       type: "list",
       name: "selectedPersonality",
-      message: "Choose a personality:",
+      message: colorfulStyles.userPrompt("Choose a personality:"), // Use cyan color for the prompt
       choices: personalityChoices,
     },
   ]);
