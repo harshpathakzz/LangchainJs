@@ -16,7 +16,7 @@ import inquirer from "inquirer"; // Import inquirer for user input
 
 // Initialize the ChatOpenAI model with specific parameters
 const chat = new ChatOpenAI({
-  temperature: 0.7,
+  temperature: 0.9,
   maxTokens: 50,
   frequencyPenalty: 1,
   presencePenalty: 1,
@@ -36,7 +36,7 @@ const personality = {
 const colorfulStyles = {
   title: chalk.hex("#13b541"), // Title color
   userPrompt: chalk.hex("#00FFFF"), // User's input color
-  characterName: chalk.hex("##00FFFF"), // Character's name color
+  characterName: chalk.hex("#00FFFF"), // Character's name color
   response: chalk.hex("#E2894B"), // Response color
 };
 
@@ -51,6 +51,30 @@ function createChatPrompt(personName) {
       colorfulStyles.userPrompt("{input}")
     ),
   ]);
+}
+
+// Function to display response with a typewriter effect
+function displayResponseWithTypewriterEffect(response) {
+  return new Promise((resolve) => {
+    const responseText = colorfulStyles.response(response);
+    const delay = 50; // Adjust the typing speed as needed
+
+    let i = 0;
+
+    const typeCharacter = () => {
+      process.stdout.write(responseText[i]);
+      i++;
+
+      if (i < responseText.length) {
+        setTimeout(typeCharacter, delay);
+      } else {
+        process.stdout.write("\n");
+        resolve();
+      }
+    };
+
+    typeCharacter();
+  });
 }
 
 // Main function
@@ -77,11 +101,13 @@ async function main() {
 
     wait.stop(); // Stop the loading animation
 
-    // Display the character's name and response in specified colors
-    console.log(
-      colorfulStyles.characterName(`${selectedPersonality}: `) +
-        colorfulStyles.response(response.response)
+    // Display the character's name with typewriter effect
+    process.stdout.write(
+      colorfulStyles.characterName(`${selectedPersonality}: `)
     );
+
+    // Display the response with a typewriter effect
+    await displayResponseWithTypewriterEffect(response.response);
   } while (input !== "exit"); // Continue the loop until the user types "exit"
 }
 
