@@ -11,8 +11,8 @@ import {
 } from "langchain/prompts";
 
 import { BufferMemory } from "langchain/memory";
-import readline from "readline";
 import chalk from "chalk";
+import inquirer from "inquirer"; // Import inquirer library
 
 const chat = new ChatOpenAI({
   temperature: 0.7,
@@ -44,12 +44,7 @@ function createChatPrompt(personName) {
 async function main() {
   console.log(chalk.bold.green("\nCharacter Chatbot\n"));
 
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  const selectedPersonality = await choosePersonality(rl); // Choose personality dynamically
+  const selectedPersonality = await choosePersonality(); // Choose personality dynamically
 
   const chain = new ConversationChain({
     memory: new BufferMemory({ returnMessages: true, memoryKey: "history" }),
@@ -60,7 +55,7 @@ async function main() {
   let input;
 
   do {
-    input = await askQuestion(rl);
+    input = await askQuestion();
 
     const wait = waitAnimation();
 
@@ -68,10 +63,11 @@ async function main() {
 
     wait.stop();
 
-    console.log(chalk.bold.yellow(`Character: ${response.response}`));
+    console.log(
+      chalk.bold(`${selectedPersonality}: `) + // Display the character's name in bold
+        chalk.yellow(response.response) // Display the response in yellow
+    );
   } while (input !== "exit");
-
-  rl.close(); // Close the readline interface when done
 }
 
 function waitAnimation() {
@@ -92,49 +88,28 @@ function waitAnimation() {
   };
 }
 
-async function askQuestion(rl) {
-  const question = chalk.cyan("You: ");
-  return new Promise((resolve) => {
-    rl.question(question, (input) => {
-      resolve(input);
-    });
-  });
+async function askQuestion() {
+  const { userInput } = await inquirer.prompt([
+    {
+      type: "input",
+      name: "userInput",
+      message: "You: ",
+    },
+  ]);
+  return userInput;
 }
 
-async function choosePersonality(rl) {
+async function choosePersonality() {
   const personalityChoices = Object.keys(personality);
-  console.log(chalk.bold.blue("Choose a personality:"));
-  personalityChoices.forEach((choice, index) => {
-    console.log(`${index + 1}. ${choice}`);
-  });
-  const selectedPersonalityIndex = await promptForNumber(
-    "Enter the number of your chosen personality: ",
-    rl
-  );
-
-  if (
-    selectedPersonalityIndex >= 1 &&
-    selectedPersonalityIndex <= personalityChoices.length
-  ) {
-    return personalityChoices[selectedPersonalityIndex - 1];
-  } else {
-    console.log(chalk.bold.red("Invalid choice. Please try again."));
-    return choosePersonality(rl);
-  }
-}
-
-async function promptForNumber(prompt, rl) {
-  return new Promise((resolve) => {
-    rl.question(prompt, (input) => {
-      const number = parseInt(input);
-      if (!isNaN(number)) {
-        resolve(number);
-      } else {
-        console.log(chalk.bold.red("Invalid input. Please enter a number."));
-        resolve(promptForNumber(prompt, rl));
-      }
-    });
-  });
+  const { selectedPersonality } = await inquirer.prompt([
+    {
+      type: "list",
+      name: "selectedPersonality",
+      message: "Choose a personality:",
+      choices: personalityChoices,
+    },
+  ]);
+  return selectedPersonality;
 }
 
 main();
