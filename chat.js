@@ -1,8 +1,11 @@
 import { config } from "dotenv";
+
 config();
 
 import { ConversationChain } from "langchain/chains";
+
 import { ChatOpenAI } from "langchain/chat_models/openai";
+
 import {
   ChatPromptTemplate,
   HumanMessagePromptTemplate,
@@ -21,19 +24,23 @@ const rl = readline.createInterface({
 
 const chatbots = {
   oogway: SystemMessagePromptTemplate.fromTemplate(
-    "I am Oogway, an old turtle from the Valley of Peace. I speak in proverbs and riddles."
+    "I am Oogway, an old turtle from the Valley of Peace in the Kung Fu Panda movies. I speak in proverbs and riddles."
   ),
+
   shakespeare: SystemMessagePromptTemplate.fromTemplate(
-    "I am William Shakespeare, the famous English poet and playwright. I will respond to you with the linguistic flair of the Elizabethan era."
+    "I am William Shakespeare, the famous English poet and playwright from the 16th-17th century. I will respond to you with the linguistic flair of the Elizabethan era."
   ),
+
   socrates: SystemMessagePromptTemplate.fromTemplate(
-    "I am Socrates, the ancient Greek philosopher. I will answer your questions through probing dialectic and dialogue."
+    "I am Socrates, the ancient Greek philosopher from Athens. I will answer your questions through probing dialectic and dialogue as depicted by Plato."
   ),
+
   rafiki: SystemMessagePromptTemplate.fromTemplate(
-    "I am Rafiki, the wise baboon from Pride Rock. I will offer you advice and wisdom through African proverbs."
+    "I am Rafiki, the wise baboon from Pride Rock in The Lion King. I will offer you advice and wisdom through African proverbs."
   ),
+
   dumbledore: SystemMessagePromptTemplate.fromTemplate(
-    "I am Albus Dumbledore, headmaster of Hogwarts School of Witchcraft and Wizardry. I will provide sagely counsel befitting the wizarding world."
+    "I am Albus Dumbledore, headmaster of Hogwarts School of Witchcraft and Wizardry from the Harry Potter series. I will provide sagely counsel befitting the wizarding world."
   ),
 };
 
@@ -58,28 +65,32 @@ const chain = new ConversationChain({
   llm: chat,
 });
 
-async function main() {
-  console.log(chalk.bold.green("\nConversation Bot\n"));
+let character;
 
+async function main() {
+  // Select character
+  character = await askCharacter();
+  const intro = chatbots[character];
+
+  console.log(`\n${intro}\n`);
+
+  // Rest of conversation
   let input;
-  let character = "oogway";
 
   do {
     input = await askQuestion();
 
     const wait = waitAnimation();
 
-    const intro = chatbots[character];
     const response = await chain.call({
       input,
     });
+
     wait.stop();
 
     console.log(
       chalk.bold.yellow(`\n${character.toUpperCase()}: ${response.response}`)
     );
-
-    character = await askCharacter();
   } while (input !== "exit");
 }
 
@@ -102,7 +113,6 @@ function waitAnimation() {
 
 async function askQuestion() {
   const question = chalk.cyan("You: ");
-
   return new Promise((resolve) => {
     rl.question(question, (input) => {
       resolve(input);
@@ -112,9 +122,7 @@ async function askQuestion() {
 
 async function askCharacter() {
   return new Promise((resolve) => {
-    rl.question(chalk.cyan("Select character: "), (input) => {
-      resolve(input);
-    });
+    rl.question(chalk.cyan("Select character: "), (input) => resolve(input));
   });
 }
 
