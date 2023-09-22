@@ -5,6 +5,9 @@
   "type": "module",
   "repository": "https://github.com/harshpathakzz/LangchainJs.git",
   "author": "harshpathakzz <harshpathak2017@gmail.com>",
+  "scripts": {
+    "start": "node chat.js"
+  },
   "license": "MIT",
   "dependencies": {
     "chalk": "^5.3.0",
