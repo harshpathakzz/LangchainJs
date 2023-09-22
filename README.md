@@ -27,10 +27,10 @@ Before running WisdomGPT-CLI, make sure you have Node.js and npm (Node Package M
 3. Install the required dependencies:
 
    ```bash
-   npm install
+   yarn
    ```
 
-4. Create a `.env` file in the project directory and add your OpenAI API key or any other required environment variables.
+4. Rename a `.env.example` to `.env` file in the project directory and add your OpenAI API key or any other required environment variables.
 
    ```env
    OPENAI_API_KEY=your_api_key_here
@@ -39,7 +39,7 @@ Before running WisdomGPT-CLI, make sure you have Node.js and npm (Node Package M
 5. Start the WisdomGPT-CLI application:
 
    ```bash
-   npm start
+   yarn start
    ```
 
 ## Usage
@@ -100,7 +100,7 @@ Before running WisdomGPT-CLI, make sure you have Node.js and npm (Node Package M
 3. Install the required dependencies:
 
    ```bash
-   npm install
+   yarn install
    ```
 
 4. Create a `.env` file in the project directory and add your OpenAI API key or any other required environment variables.
@@ -112,7 +112,7 @@ Before running WisdomGPT-CLI, make sure you have Node.js and npm (Node Package M
 5. Start the WisdomGPT-CLI application:
 
    ```bash
-   npm start
+   yarn start
    ```
 
 ## Usage
@@ -144,7 +144,7 @@ You can also adjust the typing speed and other settings in the code to customize
 
 ## Credits
 
-- WisdomGPT-CLI uses the [OpenAI GPT-3](https://beta.openai.com/signup/) model for generating responses.
+- WisdomGPT-CLI uses the [OpenAI GPT-3.5 turbo](https://platform.openai.com/docs/models/gpt-3-5) model for generating responses.
 - It makes use of various Node.js libraries and modules for user input, text formatting, and more.
 
 ## License
