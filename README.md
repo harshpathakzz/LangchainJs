@@ -8,7 +8,7 @@ WisdomGPT-CLI is a command-line application that allows users to have interactiv
 - Engage in conversations by typing your questions and prompts.
 - Enjoy typewriter-style responses for a more immersive conversation.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/z_UWgZem3pk?si=KW9WJxaJ4jGN-UU3" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+  [![Watch the video](https://i.ibb.co/6YLzNCn/Wisdom-GPT-Your-AI-Guide-to-Knowledge-and-Conversation2.png)](https://www.youtube.com/embed/z_UWgZem3pk?si=D5yMtN-drxnHDkk-)
 
 
 ## Installation
