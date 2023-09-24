@@ -8,6 +8,9 @@ WisdomGPT-CLI is a command-line application that allows users to have interactiv
 - Engage in conversations by typing your questions and prompts.
 - Enjoy typewriter-style responses for a more immersive conversation.
 
+[![Demo Video](https://img.youtube.com/vi/z_UWgZem3pk/0.jpg)](https://www.youtube.com/watch?v=z_UWgZem3pk)
+<iframe width="560" height="315" src="https://www.youtube.com/embed/z_UWgZem3pk" frameborder="0" allowfullscreen></iframe>
+
 ## Installation
 
 Before running WisdomGPT-CLI, make sure you have Node.js and npm (Node Package Manager) installed on your system.
