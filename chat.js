@@ -17,6 +17,8 @@ import inquirer from "inquirer"; // Import inquirer for user input
 
 // Initialize the ChatOpenAI model with specific parameters
 const chat = new ChatOpenAI({
+  openAIApiKey: process.env.OPENAI_API_KEY,
+  modelName: "gpt-3.5-turbo",
   temperature: 0.9,
   maxTokens: 100,
   frequencyPenalty: 1,
